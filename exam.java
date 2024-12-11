@@ -1,5 +1,6 @@
 import java.util.Date;
-public class exam {
+
+public class exam  {
     private modules module;
     private Date date;
     private filiere filiere;
@@ -26,6 +27,8 @@ public class exam {
     public void setFiliere(filiere filiere) {
         this.filiere = filiere;
     }
+
+   
     
     
 }
