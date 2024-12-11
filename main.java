@@ -3,11 +3,11 @@ import java.util.Hashtable;
 public class main {
     private static Cp[] cp = new Cp[0];
     private static Ci[] ci = new Ci[0];
-    private static Hashtable<String, filiere> filtable = new Hashtable<>();
+    private static Hashtable<String, exam> filtable = new Hashtable<>();
     public static void main(String[] args) {
     String[] fils={"info", "btp", "indus"};
     for (String fil: fils){
-        filtable.put(fil, new filiere(fil));
+        filtable.put(fil, new exam());
     }
         boolean continuer = true;
         while(continuer){
@@ -20,7 +20,9 @@ public class main {
             System.out.println("5- trier les étudiants");
             System.out.println("6- Afficher la moyenne des étudiants");
             System.out.println("7- Quitter");
-            System.out.println("8-afficher les etudiatants dune filiere spécifiée :");
+            System.out.println("8-afficher les etudiatants d'une filiere spécifiée :");
+            System.out.print("9-afficher les etudiatants admis et non admis d'une filiere spécifiée :");
+            System.out.println("10-afficher les information de l'examen");
             Scanner scanner = new Scanner(System.in);
             int choix = scanner.nextInt();
             scanner.nextLine();
@@ -47,6 +49,27 @@ public class main {
                     break;
                 case 8 :
                     afficherEtudiantsFil();
+                    break;
+                case 9:
+                    System.out.println("donner le nom de la filiere ");
+                    String filiere_name = scanner.nextLine();
+                    if(filtable.containsKey(filiere_name)){
+                        System.out.println("les etudiants admis sont :");
+                        filtable.get(filiere_name).afficherAdmis();
+                        System.out.println("les etudiants non admis sont :");
+                        filtable.get(filiere_name).afficherNonAdmis();
+                    }else{
+                        System.out.println("la filiere n'existe pas ");
+                    }
+                    break;
+                case 10:
+                    System.out.println("donner le nom de la filiere ");
+                    String filiere_name1 = scanner.nextLine();
+                    if(filtable.containsKey(filiere_name1)){
+                        filtable.get(filiere_name1).afficherExam();
+                    }else{
+                        System.out.println("la filiere n'existe pas ");
+                    }
                     break;
                 default:
                     System.out.println("Choix invalide");
@@ -90,22 +113,22 @@ public class main {
             newcp[cp.length] = nvEtudiant;
             cp = newcp;
         }else if(choix == 2){
-            System.out.print("Entrez la filière de l'étudiant: ");
+            System.out.print("Entrez la filière de l'étudiant:{info, btp, indus} ");
             String filiere_name = scanner.nextLine();
             if(filtable.containsKey(filiere_name)){
-                System.out.print("Entrez la note du PFE: ");
+            System.out.print("Entrez la note du PFE: ");
             int noteModulePFE = scanner.nextInt();
             scanner.nextLine();
             modules pfe = new modules();
             pfe.setNote(noteModulePFE);
-            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filtable.get(filiere_name), pfe);
+            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filtable.get(filiere_name).getFiliere(), pfe);
             Ci[] newci = new Ci[ci.length + 1];
             for (int i = 0; i < ci.length; i++) {
                 newci[i] = ci[i];
             }
             newci[ci.length] = nvEtudiant;
             ci = newci;
-            filtable.get(filiere_name).ajouterEtudiant(nvEtudiant);
+            filtable.get(filiere_name).getFiliere().ajouterEtudiant(nvEtudiant);
             System.out.println("L'étudiant a été ajouté");
             }else{
                 System.out.println("la filiere n'existe plus .");
@@ -296,13 +319,10 @@ public class main {
         System.out.println("donner le nom de la filiere ");
         String filiere_name = scanner.nextLine();
         if(filtable.containsKey(filiere_name)){
-            filtable.get(filiere_name).afficherEtudiants();
+            filtable.get(filiere_name).getFiliere().afficherEtudiants();
         }else{
             System.out.println("la filiere n'existe pas ");
         }
-
-
-
     }
     
 
