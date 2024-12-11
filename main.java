@@ -5,7 +5,7 @@ public class main {
     public static void main(String[] args) {
         boolean continuer = true;
         while(continuer){
-            System.out.println("Menu du projet: ");
+            System.out.println("Menu: ");
             System.out.println("1- Ajouter un étudiant");
             System.out.println("2- Supprimer un étudiant");
             System.out.println("3- Afficher les étudiants");
