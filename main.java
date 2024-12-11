@@ -53,7 +53,7 @@ public class main {
                     break;
             }
         }
-        System.out.println("Au revoir");
+        System.out.println("Au revoir!");
     }
 
     public static void ajouteretudiant() {
