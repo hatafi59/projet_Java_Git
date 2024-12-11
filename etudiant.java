@@ -64,6 +64,12 @@ public class etudiant {
         }
         return s;
     }
+
+
+
+
+
+
     @Override
     public String toString() {
         return "Etudiant :\nnom=" + getNom() + " .\nprenom=" + getPrenom() + ".\nage=" + getAge() + ".\nCNE=" + getCNE() + ".\nmodules=" + Arrays.toString(this.getModules()) + ".\nmoyenne=" + moyenne() + "\nSituation :" + valider() ;

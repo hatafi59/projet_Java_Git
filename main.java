@@ -1,10 +1,17 @@
 import java.util.Scanner;
+import java.util.Hashtable;
 public class main {
     private static Cp[] cp = new Cp[0];
     private static Ci[] ci = new Ci[0];
+    private static Hashtable<String, filiere> filtable = new Hashtable<>();
     public static void main(String[] args) {
+    String[] fils={"info", "btp", "indus"};
+    for (String fil: fils){
+        filtable.put(fil, new filiere(fil));
+    }
         boolean continuer = true;
         while(continuer){
+            // Menu
             System.out.println("Menu: ");
             System.out.println("1- Ajouter un étudiant");
             System.out.println("2- Supprimer un étudiant");
@@ -13,6 +20,7 @@ public class main {
             System.out.println("5- trier les étudiants");
             System.out.println("6- Afficher la moyenne des étudiants");
             System.out.println("7- Quitter");
+            System.out.println("8-afficher les etudiatants dune filiere spécifiée :");
             Scanner scanner = new Scanner(System.in);
             int choix = scanner.nextInt();
             scanner.nextLine();
@@ -36,6 +44,9 @@ public class main {
                     break;
                 case 7:
                     continuer = false;
+                    break;
+                case 8 :
+                    afficherEtudiantsFil();
                     break;
                 default:
                     System.out.println("Choix invalide");
@@ -80,21 +91,29 @@ public class main {
             cp = newcp;
         }else if(choix == 2){
             System.out.print("Entrez la filière de l'étudiant: ");
-            String filiere = scanner.nextLine();
-            System.out.print("Entrez la note du PFE: ");
+            String filiere_name = scanner.nextLine();
+            if(filtable.containsKey(filiere_name)){
+                System.out.print("Entrez la note du PFE: ");
             int noteModulePFE = scanner.nextInt();
             scanner.nextLine();
             modules pfe = new modules();
             pfe.setNote(noteModulePFE);
-            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filiere, pfe);
+            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filtable.get(filiere_name), pfe);
             Ci[] newci = new Ci[ci.length + 1];
             for (int i = 0; i < ci.length; i++) {
                 newci[i] = ci[i];
             }
             newci[ci.length] = nvEtudiant;
             ci = newci;
+            filtable.get(filiere_name).ajouterEtudiant(nvEtudiant);
+            System.out.println("L'étudiant a été ajouté");
+            }else{
+                System.out.println("la filiere n'existe plus .");
+            }
+            
+            
         }
-        System.out.println("L'étudiant a été ajouté");
+        
     }
 
     public static void afficherEtudiants() {
@@ -271,6 +290,19 @@ public class main {
              moyenne = moyenne / ci.length;
         }
         return moyenne;
+    }
+    public static void afficherEtudiantsFil(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("donner le nom de la filiere ");
+        String filiere_name = scanner.nextLine();
+        if(filtable.containsKey(filiere_name)){
+            filtable.get(filiere_name).afficherEtudiants();
+        }else{
+            System.out.println("la filiere n'existe pas ");
+        }
+
+
+
     }
     
 

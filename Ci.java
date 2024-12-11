@@ -1,18 +1,18 @@
 public class Ci extends etudiant{
-    private String filiere;
+    private filiere filiere;
     private modules pfe = new modules();
 
-    public Ci(String nom, String prenom, int age, String CNE, modules[] modules, String filiere ,modules pfe) {
+    public Ci(String nom, String prenom, int age, String CNE, modules[] modules, filiere filiere ,modules pfe) {
         super(nom, prenom, age, CNE, modules);
         this.filiere = filiere;
         this.pfe = pfe;
         this.pfe.setNom("PFE");
     }
    
-    public String getFiliere() {
+    public filiere getFiliere() {
         return filiere;
     }
-    public void setFiliere(String filiere) {
+    public void setFiliere(filiere filiere) {
         this.filiere = filiere;
     }
     public modules getPfe() {
@@ -42,7 +42,7 @@ public class Ci extends etudiant{
     }
     @Override
     public String toString() {
-        return "Ci->" + super.toString() + "\nFilière: " + filiere + "\n" + pfe.getNom() + ":" + pfe.getNote() + ".\nmoyenne=" + moyenne() + "\nSituation :" + valider();
+        return "Ci->" + super.toString() + "\nFilière: " + filiere.getNom() + "\n" + pfe.getNom() + ":" + pfe.getNote() + ".\nmoyenne=" + moyenne() + "\nSituation :" + valider();
     }
 
 
