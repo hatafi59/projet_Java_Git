@@ -6,6 +6,7 @@ public class etudiant {
     private int age;
     private String CNE;
     private modules[] modules= new modules[3];
+
     public etudiant(String nom, String prenom, int age, String CNE, modules[] modules) {
         this.nom = nom;
         this.prenom = prenom;
@@ -13,7 +14,6 @@ public class etudiant {
         this.CNE = CNE;
         this.modules = modules;
     }
-
     public String getNom() {
         return nom;
     }

@@ -3,12 +3,23 @@ import java.util.Hashtable;
 public class main {
     private static Cp[] cp = new Cp[0];
     private static Ci[] ci = new Ci[0];
-    private static Hashtable<String, exam> filtable = new Hashtable<>();
+    private static Hashtable<String, filiere> filtable = new Hashtable<>();
+    private static Hashtable<String, String[][] > moduletable = new Hashtable<>();
+    private static planning emploi = new planning();
+
+    
     public static void main(String[] args) {
-    String[] fils={"info", "btp", "indus"};
-    for (String fil: fils){
-        filtable.put(fil, new exam());
-    }
+        String[][] fils={{"info","Erraha"}, {"btp","Belaarch"}, {"indus","Eljamouli"}};
+        for (String[] fil: fils){
+            filtable.put(fil[0], new filiere(fil[0]));
+            filtable.get(fil[0]).setChefFiliere(fil[1]);
+        }
+        moduletable.put("cp", new String[][]{{"algebre", "H10", "Toufik"}, {"analyse", "H11", "Medioui"}, {"langue", "H12", "Bouzid"}});
+        moduletable.put("info", new String[][]{{"C++","H10","Elyaakoubi"}, {"langue","H11","Bouzid"}, {"python","H12","Toumanari"}});
+        moduletable.put("btp", new String[][]{{"mecanique","H10","Essabir"}, {"langue","H11","Bouzid"}, {"optimisation","H12","Toufik"}});
+        moduletable.put("indus", new String[][]{{"C++","H10","Elyaakoubi"}, {"mecanique","H11","Tihane"}, {"C","H12","Toumanari"}});
+
+
         boolean continuer = true;
         while(continuer){
             // Menu
@@ -19,10 +30,14 @@ public class main {
             System.out.println("4- Rechercher un étudiant");
             System.out.println("5- trier les étudiants");
             System.out.println("6- Afficher la moyenne des étudiants");
-            System.out.println("7- Quitter");
-            System.out.println("8-afficher les etudiatants d'une filiere spécifiée :");
-            System.out.print("9-afficher les etudiatants admis et non admis d'une filiere spécifiée :");
-            System.out.println("10-afficher les information de l'examen");
+            System.out.println("7- Afficher les détails d'une filiere");
+            System.out.println("8-Canger le prof d'un module d'une filiere");
+            System.out.println("9-Changer la salle d'un module");
+            System.out.println("10-Changer le module d'un prof");
+            System.out.println("11-Changer le chef de filiere");
+            System.out.println("12-l'emploi du temps :\n\t121- Afficher l'emploi du temps\n\t122- Ajouter une seance à l'emploi du temps\n\t123- Supprimer une seance de l'emploi du temps\n\t");
+            System.out.println("13- vérifier si une salle est occupée");
+            System.out.println("100- Quitter");
             Scanner scanner = new Scanner(System.in);
             int choix = scanner.nextInt();
             scanner.nextLine();
@@ -45,31 +60,34 @@ public class main {
                     System.out.println("La moyenne des étudiants est: " + moyenneEtudiants());
                     break;
                 case 7:
-                    continuer = false;
-                    break;
-                case 8 :
                     afficherEtudiantsFil();
                     break;
-                case 9:
-                    System.out.println("donner le nom de la filiere ");
-                    String filiere_name = scanner.nextLine();
-                    if(filtable.containsKey(filiere_name)){
-                        System.out.println("les etudiants admis sont :");
-                        filtable.get(filiere_name).afficherAdmis();
-                        System.out.println("les etudiants non admis sont :");
-                        filtable.get(filiere_name).afficherNonAdmis();
-                    }else{
-                        System.out.println("la filiere n'existe pas ");
-                    }
+                case 8:
+                    changerProfModule();
                     break;
-                case 10:
-                    System.out.println("donner le nom de la filiere ");
-                    String filiere_name1 = scanner.nextLine();
-                    if(filtable.containsKey(filiere_name1)){
-                        filtable.get(filiere_name1).afficherExam();
-                    }else{
-                        System.out.println("la filiere n'existe pas ");
-                    }
+                case 9:
+                    changerSalleModule();
+                    break;
+                case 10 :
+                    changerModuleProf();
+                    break;
+                case 11 :
+                    changerChefFiliere();
+                    break;
+                case 121:
+                    emploi.afficherEmploiDuTemps();
+                    break;
+                case 122:
+                    emploi.ajouterSeance();
+                    break;
+                case 123:
+                    emploi.supprimerSeance();
+                    break;
+                case 13:
+                    emploi.isOccupee();
+                    break;
+                case 100:
+                    continuer = false;
                     break;
                 default:
                     System.out.println("Choix invalide");
@@ -96,15 +114,17 @@ public class main {
             System.out.print("Entrez le numéro d'inscription de l'étudiant: ");
             String numeroInscription = scanner.nextLine();
             modules[] modules = new modules[3];
+        if(choix == 1){
             for (int i = 0; i < 3; i++) {
-                System.out.print("Entrez le nom du module " + (i + 1) + ": ");
-                String nomModule = scanner.nextLine();
-                System.out.print("Entrez la note du module " + (i + 1) + ": ");
+                
+                System.out.print("Entrez la note du module "+moduletable.get("cp")[i][0] + ": ");
                 int noteModule = scanner.nextInt();
                 scanner.nextLine(); 
-                modules[i] = new modules(nomModule, noteModule);
+                modules[i] = new modules(moduletable.get("cp")[i][0]);
+                modules[i].setNote(noteModule);
+                modules[i].setSal(new salle(moduletable.get("cp")[i][1]));
+                modules[i].setP(new prof(moduletable.get("cp")[i][2]));
             }
-        if(choix == 1){
             Cp nvEtudiant = new Cp(nom, prenom, age, numeroInscription, modules);
             Cp[] newcp = new Cp[cp.length + 1];
             for (int i = 0; i < cp.length; i++) {
@@ -112,8 +132,9 @@ public class main {
             }
             newcp[cp.length] = nvEtudiant;
             cp = newcp;
+            
         }else if(choix == 2){
-            System.out.print("Entrez la filière de l'étudiant:{info, btp, indus} ");
+            System.out.print("Entrez la filière de l'étudiant:{ info, btp, indus } ");
             String filiere_name = scanner.nextLine();
             if(filtable.containsKey(filiere_name)){
             System.out.print("Entrez la note du PFE: ");
@@ -121,14 +142,24 @@ public class main {
             scanner.nextLine();
             modules pfe = new modules();
             pfe.setNote(noteModulePFE);
-            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filtable.get(filiere_name).getFiliere(), pfe);
+            for (int i = 0; i < 3; i++) {
+                
+                System.out.print("Entrez la note du module "+moduletable.get(filiere_name)[i][0] + ": ");
+                int noteModule = scanner.nextInt();
+                scanner.nextLine(); 
+                modules[i] = new modules(moduletable.get(filiere_name)[i][0]);
+                modules[i].setNote(noteModule);
+                modules[i].setSal(new salle(moduletable.get(filiere_name)[i][1]));
+                modules[i].setP(new prof(moduletable.get(filiere_name)[i][2]));
+            }
+            Ci nvEtudiant = new Ci(nom, prenom, age, numeroInscription, modules, filtable.get(filiere_name), pfe);
             Ci[] newci = new Ci[ci.length + 1];
             for (int i = 0; i < ci.length; i++) {
                 newci[i] = ci[i];
             }
             newci[ci.length] = nvEtudiant;
             ci = newci;
-            filtable.get(filiere_name).getFiliere().ajouterEtudiant(nvEtudiant);
+            filtable.get(filiere_name).ajouterEtudiant(nvEtudiant);
             System.out.println("L'étudiant a été ajouté");
             }else{
                 System.out.println("la filiere n'existe plus .");
@@ -319,7 +350,85 @@ public class main {
         System.out.println("donner le nom de la filiere ");
         String filiere_name = scanner.nextLine();
         if(filtable.containsKey(filiere_name)){
-            filtable.get(filiere_name).getFiliere().afficherEtudiants();
+            System.out.println("Chef de filiere: " + filtable.get(filiere_name).getChefFiliere());
+            System.out.println("Les étudiants de la filière " + filiere_name + " sont: ");
+            filtable.get(filiere_name).afficherEtudiants();
+        }else{
+            System.out.println("la filiere n'existe pas ");
+        }
+    }
+    public static void changerProfModule(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("donner le nom de la filiere ");
+        String filiere_name = scanner.nextLine();
+        if(filtable.containsKey(filiere_name)){
+            System.out.println("donner le nom du module ");
+            String module_name = scanner.nextLine();
+            System.out.println("donner le nom du nouveau prof ");
+            String prof_name = scanner.nextLine();
+            for (int i = 0; i < moduletable.get(filiere_name).length; i++) {
+                if(moduletable.get(filiere_name)[i][0].equals(module_name)){
+                    moduletable.get(filiere_name)[i][2] = prof_name;
+                    System.out.println("le prof du module "+module_name+" a été changé");
+                    return;
+                }
+            }
+            System.out.println("le module n'existe pas ");
+        }else{
+            System.out.println("la filiere n'existe pas ");
+        }
+    }
+    public static void changerSalleModule(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("donner le nom de la filiere ");
+        String filiere_name = scanner.nextLine();
+        if(filtable.containsKey(filiere_name)){
+            System.out.println("donner le nom du module ");
+            String module_name = scanner.nextLine();
+            System.out.println("donner le nom de la nouvelle salle ");
+            String salle_name = scanner.nextLine();
+            for (int i = 0; i < moduletable.get(filiere_name).length; i++) {
+                if(moduletable.get(filiere_name)[i][0].equals(module_name)){
+                    moduletable.get(filiere_name)[i][1] = salle_name;
+                    System.out.println("la salle du module "+module_name+" a été changée");
+                    return;
+                }
+            }
+            System.out.println("le module n'existe pas ");
+        }else{
+            System.out.println("la filiere n'existe pas ");
+        }
+    }
+    public static void changerModuleProf(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("donner le nom de la filiere ");
+        String filiere_name = scanner.nextLine();
+        if(filtable.containsKey(filiere_name)){
+            System.out.println("donner le nom du prof ");
+            String prof_name = scanner.nextLine();
+            System.out.println("donner le nom du nouveau module ");
+            String module_name = scanner.nextLine();
+            for (int i = 0; i < moduletable.get(filiere_name).length; i++) {
+                if(moduletable.get(filiere_name)[i][2].equals(prof_name)){
+                    moduletable.get(filiere_name)[i][0] = module_name;
+                    System.out.println("le module du prof "+prof_name+" a été changé");
+                    return;
+                }
+            }
+            System.out.println("le prof n'existe pas ");
+        }else{
+            System.out.println("la filiere n'existe pas ");
+        }
+    }
+    public static void changerChefFiliere(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("donner le nom de la filiere ");
+        String filiere_name = scanner.nextLine();
+        if(filtable.containsKey(filiere_name)){
+            System.out.println("donner le nom du nouveau chef de filiere ");
+            String chef_name = scanner.nextLine();
+            filtable.get(filiere_name).setChefFiliere(chef_name);
+            System.out.println("le chef de filiere a été changé");
         }else{
             System.out.println("la filiere n'existe pas ");
         }
